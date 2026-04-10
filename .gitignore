@@ -1,0 +1,6 @@
+
+# Graphify - generated knowledge graph
+.graphify/
+.claude/
+
+node_modules/

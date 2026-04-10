@@ -1,0 +1,29 @@
+{
+  "name": "graphify",
+  "version": "1.0.0",
+  "description": "Codebase knowledge graph generator for Claude Code & Obsidian — persistent memory for AI coding assistants",
+  "main": "src/index.js",
+  "bin": {
+    "graphify": "./bin/graphify.js"
+  },
+  "scripts": {
+    "graphify": "node bin/graphify.js",
+    "install-hook": "node hooks/install.js"
+  },
+  "keywords": [
+    "claude-code",
+    "obsidian",
+    "knowledge-graph",
+    "codebase",
+    "ai-assistant",
+    "code-analysis",
+    "ast"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/parser": "^7.27.0",
+    "@babel/traverse": "^7.27.0",
+    "ignore": "^7.0.4"
+  }
+}
