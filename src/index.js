@@ -74,6 +74,13 @@ async function graphify(options = {}) {
   // ── Phase 7: Record analysis ───────────────────────────────
   recordAnalysis(graphifyDir, branch, currentCommit, graph.stats);
 
+  // ── Phase 8: Update fast-hook cache ────────────────────────
+  // Write hash + timestamp for the bash fast-hook's 3-tier cache
+  try {
+    fs.writeFileSync(path.join(graphifyDir, '.last_hash'), currentCommit, 'utf-8');
+    fs.writeFileSync(path.join(graphifyDir, '.fast_cache'), '', 'utf-8');
+  } catch {}
+
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
   log(`\n✅ Graphify complete in ${elapsed}s`);
   log(`   Vault:  .graphify/vault/${sanitizeBranchName(branch)}/`);
