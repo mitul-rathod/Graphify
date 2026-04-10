@@ -6,13 +6,31 @@ const ignore = require('ignore');
  * Supported file extensions and their language mappings.
  */
 const LANGUAGE_MAP = {
+  // JavaScript / TypeScript
   '.js': 'javascript',
   '.jsx': 'javascript',
   '.mjs': 'javascript',
   '.cjs': 'javascript',
   '.ts': 'typescript',
   '.tsx': 'typescript',
+  // Python family
   '.py': 'python',
+  '.pyi': 'python',     // type stubs — same parser
+  '.pyx': 'python',     // Cython — close enough to Python
+  '.pxd': 'python',     // Cython declarations
+  // C / C++ headers
+  '.c': 'c',
+  '.h': 'c',
+  // Protocol Buffers
+  '.proto': 'proto',
+  // Config
+  '.yaml': 'yaml',
+  '.yml': 'yaml',
+  // Shell
+  '.sh': 'shell',
+  // Web
+  '.html': 'html',
+  '.htm': 'html',
 };
 
 const SUPPORTED_EXTENSIONS = new Set(Object.keys(LANGUAGE_MAP));

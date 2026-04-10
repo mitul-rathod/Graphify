@@ -46,24 +46,54 @@ function timestamp() {
  * @returns {string|null} - Matched file path or null
  */
 function resolveImportPath(importSource, fromFile, allFiles) {
-  // Skip external/npm packages
-  if (!importSource.startsWith('.') && !importSource.startsWith('/')) {
+  // Skip empty sources
+  if (!importSource) return null;
+
+  // ── JS-style relative imports ──────────────────────────
+  if (importSource.startsWith('.') || importSource.startsWith('/')) {
+    const fromDir = path.dirname(fromFile);
+    const resolved = path.normalize(path.join(fromDir, importSource));
+
+    const extensions = ['', '.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs', '.py',
+      '/index.js', '/index.ts', '/index.jsx', '/index.tsx'];
+
+    for (const ext of extensions) {
+      const candidate = resolved + ext;
+      const normalized = candidate.replace(/\\/g, '/');
+      if (allFiles.has(normalized)) {
+        return normalized;
+      }
+    }
     return null;
   }
 
-  const fromDir = path.dirname(fromFile);
-  const resolved = path.normalize(path.join(fromDir, importSource));
+  // ── Python module imports (dot notation) ────────────────
+  // Convert "common_utils.tool_spec_decorator" → "common_utils/tool_spec_decorator"
+  const asPath = importSource.replace(/\./g, '/');
+  const pyCandidates = [
+    asPath + '.py',
+    asPath + '.pyi',
+    asPath + '/__init__.py',
+  ];
 
-  // Possible extensions to try
-  const extensions = ['', '.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs', '.py',
-    '/index.js', '/index.ts', '/index.jsx', '/index.tsx'];
-
-  for (const ext of extensions) {
-    const candidate = resolved + ext;
-    const normalized = candidate.replace(/\\/g, '/');
-    if (allFiles.includes(normalized)) {
-      return normalized;
+  for (const candidate of pyCandidates) {
+    if (allFiles.has(candidate)) {
+      return candidate;
     }
+  }
+
+  // Try relative to the importing file's directory
+  const fromDir = path.dirname(fromFile);
+  for (const candidate of pyCandidates) {
+    const relCandidate = path.join(fromDir, candidate).replace(/\\/g, '/');
+    if (allFiles.has(relCandidate)) {
+      return relCandidate;
+    }
+  }
+
+  // ── C/Proto includes — try direct match ────────────────
+  if (allFiles.has(importSource)) {
+    return importSource;
   }
 
   return null;

@@ -11,7 +11,7 @@
  * @returns {Object} - { functions, classes, imports, exports, variables, callExpressions }
  */
 function parsePython(filePath, source) {
-  const lines = source.split('\n');
+  const lines = source.replace(/\r\n?/g, '\n').split('\n');
   const functions = [];
   const classes = [];
   const imports = [];

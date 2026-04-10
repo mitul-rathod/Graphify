@@ -33,7 +33,7 @@ function buildGraph(files, rootDir, branch) {
     },
   };
 
-  const allRelativePaths = files.map(f => f.relativePath);
+  const allRelativePaths = new Set(files.map(f => f.relativePath));
 
   // ── Phase 1: Parse all files and create nodes ──────────────
   for (const file of files) {
@@ -223,7 +223,9 @@ function buildGraph(files, rootDir, branch) {
     totalFiles: Object.keys(graph.fileNodes).length,
     totalFunctions: Object.keys(graph.functionNodes).length,
     totalClasses: Object.keys(graph.classNodes).length,
-    totalImports: graph.edges.filter(e => e.type === EDGE_TYPES.IMPORTS).length,
+    totalImports: Object.values(graph.fileNodes)
+      .reduce((sum, fn) => sum + (fn.imports?.length || 0), 0),
+    totalResolvedImports: graph.edges.filter(e => e.type === EDGE_TYPES.IMPORTS).length,
     totalExports: Object.values(graph.fileNodes)
       .reduce((sum, fn) => sum + (fn.exports?.length || 0), 0),
     totalModules: Object.keys(graph.moduleNodes).length,
